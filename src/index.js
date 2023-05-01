@@ -1,4 +1,4 @@
-import { Telegraf } from "telegraf";
+import { Telegraf, session } from "telegraf";
 import { message } from "telegraf/filters";
 import config from "config";
 import { ogg } from "./helpers/oggConverter.js";
@@ -7,7 +7,23 @@ import { code } from "telegraf/format";
 
 const bot = new Telegraf(config.get("TELEGRAM_TOKEN"));
 
+const INITIAL_SESSION = {
+  messages: [],
+};
+
+bot.command("new", async (ctx) => {
+  ctx.session ??= INITIAL_SESSION;
+  await ctx.reply("Жду голосовое или текстовое сообщение :)");
+});
+
+bot.command("start", async (ctx) => {
+  await ctx.reply(
+    `Окей ${ctx.from.first_name}, жду голосовое или текстовое сообщение :)`
+  );
+});
+
 bot.on(message("voice"), async (ctx) => {
+  ctx.session ??= INITIAL_SESSION;
   try {
     await ctx.reply(code("Принял, жду ответа :)"));
 
@@ -26,8 +42,14 @@ bot.on(message("voice"), async (ctx) => {
 
     await ctx.reply(code(`Твой запрос: ${text}`));
 
-    const messages = [{ role: openai.roles.USER, content: text }];
-    const response = await openai.chat(messages);
+    ctx.session.messages.push({ role: openai.roles.USER, content: text });
+
+    const response = await openai.chat(ctx.session.messages);
+
+    ctx.session.messages.push({
+      role: openai.roles.ASSISTANT,
+      content: response.content,
+    });
 
     await ctx.reply(response.content);
   } catch (e) {
@@ -35,10 +57,27 @@ bot.on(message("voice"), async (ctx) => {
   }
 });
 
-bot.command("start", async (ctx) => {
-  await ctx.reply(
-    `Окей ${ctx.from.first_name}, теперь ты можешь пообщаться :)`
-  );
+bot.on(message("text"), async (ctx) => {
+  ctx.session ??= INITIAL_SESSION;
+  try {
+    await ctx.reply(code("Принял, жду ответа :)"));
+
+    ctx.session.messages.push({
+      role: openai.roles.USER,
+      content: ctx.message.text,
+    });
+
+    const response = await openai.chat(ctx.session.messages);
+
+    ctx.session.messages.push({
+      role: openai.roles.ASSISTANT,
+      content: response.content,
+    });
+
+    await ctx.reply(response.content);
+  } catch (e) {
+    console.log("Error with bot", e.message);
+  }
 });
 
 bot.launch();
