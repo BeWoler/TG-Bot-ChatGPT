@@ -1,2 +1,4 @@
 /node_modules
-/src/config
+/config
+/src/voices/*.mp3
+/src/voices/*.ogg
