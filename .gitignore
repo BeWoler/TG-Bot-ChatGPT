@@ -1,4 +1,8 @@
 /node_modules
-/config
+/config/default.json
+/config/production.json
 /src/voices/*.mp3
 /src/voices/*.ogg
+.vscode
+
+.env
