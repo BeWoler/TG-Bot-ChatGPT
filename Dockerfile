@@ -14,4 +14,4 @@ ENV PORT=${PORT}
 
 EXPOSE $PORT
 
-CMD ["npm", "start", "PORT=${PORT:-8080}"]
+CMD ["PORT=${PORT:-8080} npm start"]
