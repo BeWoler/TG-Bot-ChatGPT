@@ -3,14 +3,10 @@ FROM node:16-alpine
 WORKDIR /app
 
 COPY package*.json ./
-COPY .env .env ./
 
 RUN npm ci
 
 COPY . .
-
-ARG TELEGRAM_TOKEN
-ARG OPENAI_API_KEY
 
 ENV TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
 ENV OPENAI_API_KEY=${OPENAI_API_KEY}
