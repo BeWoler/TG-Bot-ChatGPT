@@ -25,7 +25,7 @@ class OpenAI {
       
       return response.data.choices[0].message;
     } catch (e) {
-      console.log("Error with GTP chat", e.message);
+      console.log("Error with GPT chat", e.message);
     }
   }
 

@@ -20,6 +20,7 @@ bot.command("new", async (ctx) => {
 });
 
 bot.command("start", async (ctx) => {
+  ctx.session ??= INITIAL_SESSION;
   await ctx.reply(
     `Окей ${ctx.from.first_name}, жду голосовое или текстовое сообщение :)`
   );
@@ -65,6 +66,8 @@ bot.on(message("text"), async (ctx) => {
   try {
     await ctx.reply(code("Принял, жду ответа :)"));
 
+    await ctx.reply(code(`Твой запрос: ${ctx.message.text}`));
+
     ctx.session.messages.push({
       role: openai.roles.USER,
       content: ctx.message.text,
@@ -77,7 +80,7 @@ bot.on(message("text"), async (ctx) => {
       content: response.content,
     });
 
-    await ctx.reply(response.content);
+    await ctx.reply(response.content ? response.content : 'Сорри, ошибка');
   } catch (e) {
     console.log("Error with bot", e.message);
   }
