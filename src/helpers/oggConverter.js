@@ -46,6 +46,7 @@ class OggConverter {
         stream.on("finish", () => res(oggPath));
       });
     } catch (e) {
+      ctx.reply('Сорри, ошибка, обратитесь к разрабу ;(');
       console.log("Error with creating ogg", e.message);
     }
   }

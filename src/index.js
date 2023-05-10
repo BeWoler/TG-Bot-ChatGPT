@@ -57,6 +57,7 @@ bot.on(message("voice"), async (ctx) => {
 
     await ctx.reply(response.content);
   } catch (e) {
+    ctx.reply('Сорри, ошибка, обратитесь к разрабу ;(');
     console.log("Error with bot", e.message);
   }
 });
@@ -82,6 +83,7 @@ bot.on(message("text"), async (ctx) => {
 
     await ctx.reply(response.content ? response.content : 'Сорри, ошибка');
   } catch (e) {
+    ctx.reply('Сорри, ошибка, обратитесь к разрабу ;(');
     console.log("Error with bot", e.message);
   }
 });
